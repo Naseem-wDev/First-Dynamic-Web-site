@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sell item — Marketplace</title>
+    <link href="/css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Post an item</h3>
+        <div>
+          <a class="btn btn-primary" href="/listings.html">Browse</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <form id="sellForm" enctype="multipart/form-data">
+          <div class="mb-2">
+            <label class="form-label">Title</label>
+            <input class="form-control" name="title" required />
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Price (USD)</label>
+            <input class="form-control" name="price" type="number" step="0.01" required />
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Photo</label>
+            <input class="form-control" name="image" type="file" accept="image/*" />
+          </div>
+          <button class="btn btn-primary">Post item</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('sellForm').addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        if(!token){ if(confirm('You need an account to sell. Go to login?')) window.location.href='/login.html'; return }
+        const fd = new FormData(e.target);
+        const res = await fetch('/api/items', { method:'POST', headers:{ 'Authorization': 'Bearer '+token }, body: fd });
+        const json = await res.json();
+        if(res.ok){ alert('Item posted'); window.location.href='/public/listings.html'; } else alert(json.message||'Error');
+      });
+    </script>
+  </body>
+</html>
